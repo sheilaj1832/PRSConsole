@@ -1,4 +1,4 @@
-package business;
+package prs.business;
 
 public class PurchaseRequestLineItem {
 	
