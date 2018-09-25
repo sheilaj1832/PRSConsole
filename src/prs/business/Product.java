@@ -3,26 +3,26 @@ package prs.business;
 public class Product {
 
 	private int id;
-	private int vendorId;
+	private int vendorID;
 	private String partNumber;
 	private String name;
 	private double price;
 	private String unit;
 	private String photoPath;
 
-	public Product(int vendorId, String partNumber, String name, double price, String unit, String photoPath) {
+	public Product(int vendorID, String partNumber, String name, double price, String unit, String photoPath) {
 		super();
-		this.vendorId = vendorId;
+		this.vendorID = vendorID;
 		this.partNumber = partNumber;
 		this.name = name;
 		this.price = price;
 		this.unit = unit;
 		this.photoPath = photoPath;
 	}
-		public Product(int id, int vendorId, String partNumber, String name, double price, String unit, String photoPath) {
+	public Product(int id, int vendorID, String partNumber, String name, double price, String unit, String photoPath) {
 		super();
 		this.id = id;
-		this.vendorId = vendorId;
+		this.vendorID = vendorID;
 		this.partNumber = partNumber;
 		this.name = name;
 		this.price = price;
@@ -30,6 +30,13 @@ public class Product {
 		this.photoPath = photoPath;
 	}
 
+	public Product(int vendorID, String partNumber, String name, double price) {
+		super();
+		this.vendorID = vendorID;
+		this.partNumber = partNumber;
+		this.name = name;
+		this.price = price;
+	}
 	public int getId() {
 		return id;
 	}
@@ -38,12 +45,12 @@ public class Product {
 		this.id = id;
 	}
 
-	public int getVendorId() {
-		return vendorId;
+	public int getVendorID() {
+		return vendorID;
 	}
 
-	public void setVendorId(int vendorId) {
-		this.vendorId = vendorId;
+	public void setVendorID(int vendorID) {
+		this.vendorID = vendorID;
 	}
 
 	public String getPartNumber() {
@@ -88,7 +95,7 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", vendorId=" + vendorId + ", partNumber=" + partNumber + ", name=" + name
+		return "Product [id=" + id + ", vendorID=" + vendorID + ", partNumber=" + partNumber + ", name=" + name
 				+ ", price=" + price + ", unit=" + unit + ", photoPath=" + photoPath + "]";
 	}
 	

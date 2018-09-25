@@ -12,60 +12,6 @@ import prs.util.DBUtil;
 
 public class ProductDB {
 
-	public List<Product> get(String name) {
-		String sql = "SELECT * from Product where name = ?";
-		List<Product> products = new ArrayList<>();
-		Product p = null;
-		try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql);) {
-			ps.setString(1, name);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				int id = rs.getInt(1);
-				int vendorId = rs.getInt(2);
-				String partNumber = rs.getString(3);
-				String n = rs.getString(4);
-				double price = rs.getDouble(5);
-				String unit = rs.getString(6);
-				String photoPath = rs.getString(7);
-				p = new Product(id, vendorId, partNumber, n, price, unit, photoPath);
-
-				products.add(p);
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return products;
-	}
-
-	public List<Product> get(int vendorId) {
-		String sql = "SELECT * from Product where vendorId = ?";
-		List<Product> products = new ArrayList<>();
-		Product p = null;
-		try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql);) {
-			ps.setInt(1, vendorId);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				int id = rs.getInt(1);
-				int v = rs.getInt(2);
-				String partNumber = rs.getString(3);
-				String name = rs.getString(4);
-				double price = rs.getDouble(5);
-				String unit = rs.getString(6);
-				String photoPath = rs.getString(7);
-				p = new Product(id, v, partNumber, name, price, unit, photoPath);
-
-				products.add(p);
-			}
-
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return products;
-	}
-
 	public List<Product> getAll() {
 		String sql = "SELECT * FROM  Product";
 		List<Product> products = new ArrayList<>();
@@ -73,15 +19,7 @@ public class ProductDB {
 				PreparedStatement ps = connection.prepareStatement(sql);
 				ResultSet rs = ps.executeQuery()) {
 			while (rs.next()) {
-				int id = rs.getInt(1);
-				int vendorId = rs.getInt(2);
-				String partNumber = rs.getString(3);
-				String name = rs.getString(4);
-				double price = rs.getDouble(5);
-				String unit = rs.getString(6);
-				String photoPath = rs.getString(7);
-				Product p = new Product(id, vendorId, partNumber, name, price, unit, photoPath);
-
+				Product p = getProductFromResultSet(rs);
 				products.add(p);
 			}
 		} catch (SQLException e) {
@@ -90,16 +28,43 @@ public class ProductDB {
 		return products;
 	}
 
+	public Product getProduct(int pid) {
+		String sql = "SELECT * FROM  Product WHERE ID =?";
+		Product product = null;
+		try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql);) {
+			ps.setInt(1, pid);
+			ResultSet rs = ps.executeQuery(); // need to move out of try statement when we use a WHERE statement.
+			while (rs.next()) {
+				product = getProductFromResultSet(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		return product;
+	}
+
+	private Product getProductFromResultSet(ResultSet rs) throws SQLException {
+		int id = rs.getInt(1);
+		int vendorID = rs.getInt(2);
+		String partNumber = rs.getString(3);
+		String name = rs.getString(4);
+		double price = rs.getDouble(5);
+		String unit = rs.getString(6);
+		String photoPath = rs.getString(7);
+		Product p = new Product(id, vendorID, partNumber, name, price, unit, photoPath);
+		return p;
+	}
+
 	public boolean add(Product p) {
-		String sql = "INSERT INTO Product (vendorId, partNumber, name, price, unit, photoPath) "
-				+ "VALUES (?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO Product (vendorID, partNumber, name, price) " + "VALUES (?, ?, ?, ?)";
 		try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
-			ps.setInt(1, p.getVendorId());
+			ps.setInt(1, p.getVendorID());
 			ps.setString(2, p.getPartNumber());
 			ps.setString(3, p.getName());
 			ps.setDouble(4, p.getPrice());
-			ps.setString(5, p.getUnit());
-			ps.setString(6, p.getPhotoPath());
+			// as unit and photoPath are nullable, you don't necessarily need to include
+			// here.
 			ps.executeUpdate();
 			return true;
 
@@ -108,21 +73,6 @@ public class ProductDB {
 			return false;
 		}
 	}
-
-//	public boolean update(Product p) {
-//        String sql = "UPDATE Products SET "
-//                + "  Description = ?, "
-//                + "  Price = ? "
-//                + "WHERE ProductCode = ?";
-//		try (Connection connection = DBUtil.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
-//         ps.setString(1, p.getDescription());
-//         ps.setDouble(2, p.getPrice());
-//         ps.setString(3, p.getCode());
-//         ps.executeUpdate();
-//         return true;
-//     } catch (SQLException e) {
-//         System.err.println(e);
-//         return false;
 	
 	public boolean delete(Product p) {
 		String sql = "DELETE FROM Products " + "WHERE Name = ?";
